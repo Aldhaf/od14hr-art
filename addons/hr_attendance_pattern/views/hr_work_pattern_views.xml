@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_work_pattern_view_form" model="ir.ui.view">
+            <field name="name">hr.work.pattern.form</field>
+            <field name="model">hr.work.pattern</field>
+            <field name="arch" type="xml">
+                <form string="Work Pattern">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="store_location_id"/>
+                            <field name="work_from" widget="float_time"/>
+                            <field name="work_to" widget="float_time"/>
+                            <field name="duration" widget="float_time"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_work_pattern_view_tree" model="ir.ui.view">
+            <field name="name">hr.work.pattern.tree</field>
+            <field name="model">hr.work.pattern</field>
+            <field name="arch" type="xml">
+                <tree string="Work Patterns">
+                    <field name="name"/>
+                    <field name="work_from" widget="float_time"/>
+                    <field name="work_to" widget="float_time"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_work_pattern_action" model="ir.actions.act_window">
+            <field name="name">Work Patterns</field>
+            <field name="res_model">hr.work.pattern</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_hr_work_pattern" name="Work Patterns" parent="hr.menu_human_resources_configuration" action="hr_work_pattern_action" sequence="99"/>
+    </data>
+</odoo>

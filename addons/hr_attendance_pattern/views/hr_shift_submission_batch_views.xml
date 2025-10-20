@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_shift_submission_batch_view_tree" model="ir.ui.view">
+            <field name="name">hr.shift.submission.batch.tree</field>
+            <field name="model">hr.shift.submission.batch</field>
+            <field name="arch" type="xml">
+                <tree string="Monthly Submissions">
+                    <field name="employee_id"/>
+                    <field name="submission_month"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_shift_submission_batch_view_form" model="ir.ui.view">
+            <field name="name">hr.shift.submission.batch.form</field>
+            <field name="model">hr.shift.submission.batch</field>
+            <field name="arch" type="xml">
+                <form string="Monthly Submission">
+                    <header>
+                        <button name="action_approve_batch" string="Approve All" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'requested')]}"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="submission_month" readonly="1"/>
+                        </group>
+                        <field name="roster_ids" readonly="1">
+                            <tree>
+                                <field name="date"/>
+                                <field name="work_pattern_id"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_shift_submission_batch_action" model="ir.actions.act_window">
+            <field name="name">Monthly Submissions</field>
+            <field name="res_model">hr.shift.submission.batch</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+            id="menu_hr_shift_submission_batch"
+            name="Monthly Submissions"
+            parent="hr.menu_hr_root"
+            action="hr_shift_submission_batch_action"
+            sequence="21"/>
+    </data>
+</odoo>

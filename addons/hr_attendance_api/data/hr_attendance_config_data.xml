@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="geofence_tolerance_meters" model="ir.config_parameter">
+            <field name="key">hr_attendance.geofence_tolerance_meters</field>
+            <field name="value">150</field>
+        </record>
+    </data>
+</odoo>

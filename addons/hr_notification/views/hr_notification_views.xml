@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_notification_view_tree" model="ir.ui.view">
+            <field name="name">hr.notification.tree</field>
+            <field name="model">hr.notification</field>
+            <field name="arch" type="xml">
+                <tree string="Notifications">
+                    <field name="create_date" string="Date"/>
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="type"/>
+                    <field name="is_read"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_notification_view_form" model="ir.ui.view">
+            <field name="name">hr.notification.form</field>
+            <field name="model">hr.notification</field>
+            <field name="arch" type="xml">
+                <form string="Notification">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="user_id"/>
+                            </group>
+                            <group>
+                                <field name="type"/>
+                                <field name="is_read"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Message Body">
+                                <field name="body"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_notification_action" model="ir.actions.act_window">
+            <field name="name">Notifications</field>
+            <field name="res_model">hr.notification</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new notification.
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="hr_notification_menu"
+            name="Notifications"
+            parent="hr.menu_hr_root"
+            action="hr_notification_action"
+            sequence="25"/>
+
+    </data>
+</odoo>

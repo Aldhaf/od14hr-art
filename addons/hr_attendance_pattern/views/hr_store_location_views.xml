@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_store_location_view_form" model="ir.ui.view">
+            <field name="name">hr.store.location.form</field>
+            <field name="model">hr.store.location</field>
+            <field name="arch" type="xml">
+                <form string="Store Location">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="address"/>
+                            </group>
+                            <group>
+                                <label for="gps_latitude" string="GPS Coordinates"/>
+                                <div class="o_row">
+                                    <field name="gps_latitude" placeholder="Latitude"/>
+                                    <field name="gps_longitude" placeholder="Longitude"/>
+                                </div>
+                                <field name="geofence_radius"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_store_location_view_tree" model="ir.ui.view">
+            <field name="name">hr.store.location.tree</field>
+            <field name="model">hr.store.location</field>
+            <field name="arch" type="xml">
+                <tree string="Store Locations">
+                    <field name="name"/>
+                    <field name="address"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hr_store_location_action" model="ir.actions.act_window">
+            <field name="name">Store Locations</field>
+            <field name="res_model">hr.store.location</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new store location for your SPG/SPB.
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+            id="menu_hr_store_location"
+            name="Store Locations"
+            parent="hr.menu_human_resources_configuration"
+            action="hr_store_location_action"
+            sequence="100"/>
+
+    </data>
+</odoo>

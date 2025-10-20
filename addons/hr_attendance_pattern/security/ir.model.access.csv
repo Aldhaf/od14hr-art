@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_work_pattern_user,hr.work.pattern.user,model_hr_work_pattern,base.group_user,1,0,0,0
+access_hr_work_pattern_manager,hr.work.pattern.manager,model_hr_work_pattern,hr.group_hr_manager,1,1,1,1
+access_hr_store_location_user,hr.store.location.user,model_hr_store_location,base.group_user,1,0,0,0
+access_hr_store_location_manager,hr.store.location.manager,model_hr_store_location,hr.group_hr_manager,1,1,1,1
+access_hr_shift_roster_user,hr.shift.roster.user,model_hr_shift_roster,base.group_user,1,1,1,1
+access_hr_shift_roster_officer,hr.shift.roster.officer,model_hr_shift_roster,hr.group_hr_user,1,1,1,1
+access_hr_shift_roster_manager,hr.shift.roster.manager,model_hr_shift_roster,hr.group_hr_manager,1,1,1,1
+access_hr_shift_submission_batch_user,hr.shift.submission.batch.user,model_hr_shift_submission_batch,base.group_user,1,1,1,1
