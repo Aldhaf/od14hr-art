@@ -10,6 +10,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/hr_shift_security.xml',
+        'wizard/reject_reason_wizard_views.xml',
         'views/hr_work_pattern_views.xml',
         'views/hr_store_location_views.xml',
         'views/hr_employee_views.xml',

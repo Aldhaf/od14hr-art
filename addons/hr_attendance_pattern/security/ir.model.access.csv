@@ -7,3 +7,4 @@ access_hr_shift_roster_user,hr.shift.roster.user,model_hr_shift_roster,base.grou
 access_hr_shift_roster_officer,hr.shift.roster.officer,model_hr_shift_roster,hr.group_hr_user,1,1,1,1
 access_hr_shift_roster_manager,hr.shift.roster.manager,model_hr_shift_roster,hr.group_hr_manager,1,1,1,1
 access_hr_shift_submission_batch_user,hr.shift.submission.batch.user,model_hr_shift_submission_batch,base.group_user,1,1,1,1
+access_reject_reason_wizard_manager,hr.shift.roster.reject.wizard.manager,model_hr_shift_roster_reject_wizard,hr.group_hr_manager,1,1,1,1

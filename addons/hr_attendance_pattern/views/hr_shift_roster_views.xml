@@ -23,7 +23,7 @@
                 <form string="Shift Roster">
                     <header>
                         <button name="action_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'requested')]}"/>
-                        <button name="action_reject" string="Reject" type="object" attrs="{'invisible': [('state', '!=', 'requested')]}"/>
+                        <button name="action_open_reject_wizard" string="Reject" type="object" attrs="{'invisible': [('state', '!=', 'requested')]}"/>
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" attrs="{'invisible': [('state', 'not in', ['approved', 'rejected'])]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,requested,approved"/>
                     </header>

@@ -12,32 +12,100 @@ class WorkPatternApiController(http.Controller):
     def submit_monthly_roster(self, schedules=None, month_name=None, **kwargs):
         employee = self._get_employee()
         if not employee or not schedules:
-            return {'error': 'Data tidak lengkap.'}
+            _logger.warning(f"API Call Failed: Missing employee or schedules for user {request.env.user.name}")
+            return {'error': 'Data tidak lengkap (karyawan atau jadwal tidak ditemukan).'}
+
+        _logger.info(
+            f"User {employee.name} submitting monthly roster for {month_name}. Schedules count: {len(schedules)}")
 
         Batch = request.env['hr.shift.submission.batch'].sudo()
         Roster = request.env['hr.shift.roster'].sudo()
+        created_roster_ids = []
+        updated_roster_ids = []
 
         try:
-            # 1. Buat "Paket" (Batch) nya terlebih dahulu
+            # 1. Membuat "Paket" (Batch) nya terlebih dahulu
             new_batch = Batch.create({
                 'employee_id': employee.id,
-                'submission_month': month_name,  # Contoh: "Oktober 2025"
+                'submission_month': month_name,
+                'state': 'requested',
             })
+            _logger.info(f"Created submission batch {new_batch.id} for {employee.name}")
 
-            # 2. Buat setiap detail jadwal dan hubungkan ke batch
+            # 2. Memproses setiap detail jadwal dalam pengajuan
             for schedule in schedules:
-                Roster.create({
-                    'employee_id': employee.id,
-                    'date': schedule.get('date'),
-                    'work_pattern_id': schedule.get('work_pattern_id'),
-                    'state': 'requested',
-                    'batch_id': new_batch.id,  # <-- Menghubungkan ke paket
-                })
+                roster_date = schedule.get('date')
+                work_pattern_id = schedule.get('work_pattern_id')
 
-            return {'success': True, 'message': 'Pengajuan bulanan berhasil dikirim.'}
+                if not roster_date or not work_pattern_id:
+                    _logger.warning(f"Skipping invalid schedule entry: {schedule}")
+                    continue  # Lewati entri jadwal yang tidak lengkap
+
+                # ✅ Cari existing roster untuk employee & date
+                existing_roster = Roster.search([
+                    ('employee_id', '=', employee.id),
+                    ('date', '=', roster_date),
+                ], limit=1)
+
+                if existing_roster:
+                    # Jika sudah ada:
+                    if existing_roster.state == 'rejected':
+                        # Jika statusnya 'rejected', UPDATE menjadi 'requested' lagi
+                        _logger.info(f"Found rejected roster {existing_roster.id} for date {roster_date}. Updating...")
+                        existing_roster.write({
+                            'work_pattern_id': work_pattern_id,
+                            'state': 'requested',
+                            'batch_id': new_batch.id,  # Menghubungkan ke batch baru
+                            'rejection_reason': False,  # Menghapus alasan reject lama
+                            'approver_id': False,  # Menghapus approver lama
+                        })
+                        updated_roster_ids.append(existing_roster.id)
+                    elif existing_roster.state in ('requested', 'approved'):
+                        # Jika sudah 'requested' atau 'approved', abaikan pengajuan baru
+                        # (Atau bisa memutuskan untuk menimpanya jika perlu,
+                        #  tapi mengabaikan lebih aman untuk mencegah duplikasi/konflik)
+                        _logger.warning(
+                            f"Skipping submission for date {roster_date}. Existing roster {existing_roster.id} found with status '{existing_roster.state}'.")
+                        continue
+                    else:  # draft atau state lain? Mungkin update saja
+                        _logger.info(
+                            f"Found existing roster {existing_roster.id} for date {roster_date} with status '{existing_roster.state}'. Updating...")
+                        existing_roster.write({
+                            'work_pattern_id': work_pattern_id,
+                            'state': 'requested',
+                            'batch_id': new_batch.id,
+                        })
+                        updated_roster_ids.append(existing_roster.id)
+
+                else:
+                    # Jika tidak ada, create record baru
+                    _logger.info(f"No existing roster found for date {roster_date}. Creating new...")
+                    new_roster = Roster.create({
+                        'employee_id': employee.id,
+                        'date': roster_date,
+                        'work_pattern_id': work_pattern_id,
+                        'state': 'requested',
+                        'batch_id': new_batch.id,
+                    })
+                    created_roster_ids.append(new_roster.id)
+
+                    _logger.info(
+                        f"Monthly roster submission processed for {employee.name}. Created: {len(created_roster_ids)}, Updated: {len(updated_roster_ids)}")
+                    return {'success': True, 'message': 'Pengajuan bulanan berhasil diproses.'}
+
+
         except Exception as e:
-            request.env.cr.rollback()
-            return {'error': str(e)}
+            _logger.error(f"Error processing monthly roster for {employee.name}: {e}", exc_info=True)
+            request.env.cr.rollback()  # Batalkan semua perubahan jika ada error
+
+            # Hapus batch yang mungkin sudah terbuat jika terjadi error
+            if 'new_batch' in locals() and new_batch.exists():
+                try:
+                    new_batch.unlink()
+                except Exception as unlink_e:
+                    _logger.error(f"Failed to unlink incomplete batch {new_batch.id} after error: {unlink_e}")
+
+            return {'error': f'Terjadi kesalahan saat memproses pengajuan: {str(e)}'}
 
     @http.route('/api/get_booked_dates', type='json', auth='user', methods=['POST'], csrf=False)
     def get_booked_dates(self, start_date=None, end_date=None, **kwargs):
