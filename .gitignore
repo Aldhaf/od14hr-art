@@ -9,6 +9,12 @@ _build/
 # compiled python files
 *.py[co]
 __pycache__/
+*.log
+.env
+venv/
+# 1. Kunci Akun Layanan Firebase (SANGAT KRUSIAL)
+**/etc/odoo/*.json
+serviceAccountKey.json
 # setup.py egg_info
 *.egg-info
 # emacs backup files
@@ -37,6 +43,9 @@ tsconfig.json
 package-lock.json
 package.json
 .husky
+
+.vscode/
+.idea/
 
 # various virtualenv
 /bin/
